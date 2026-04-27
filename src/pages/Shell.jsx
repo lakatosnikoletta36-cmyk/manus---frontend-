@@ -1,14 +1,18 @@
 import React from 'react';
+import Avatar from '../components/Avatar';
+import Chat from '../components/Chat';
 
 const Shell = () => {
+  const user = { name: "Gazda", id: "admin" };
   return (
-    <div style={{ backgroundColor: 'black', color: '#00ffff', minHeight: '100vh', padding: '20px', textAlign: 'center' }}>
-      <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>MANUS RENDSZER</h1>
-      <div style={{ border: '2px solid #00ffff', height: '300px', borderRadius: '50%', width: '300px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span>AVATAR ONLINE</span>
-      </div>
-      <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #333', background: '#111' }}>
-        <p>A szerver válasza: [KÉSZ]</p>
+    <div style={{ backgroundColor: 'black', minHeight: '100vh', color: '#00ffff' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
+        <div style={{ height: '350px', width: '100%' }}>
+          <Avatar user={user} />
+        </div>
+        <div style={{ padding: '10px' }}>
+          <Chat user={user} />
+        </div>
       </div>
     </div>
   );
