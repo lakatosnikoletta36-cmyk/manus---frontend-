@@ -184,7 +184,7 @@ export default function Shell({ user }) {
   const postureLabels = { idle: 'nyugalmi', leaning: 'figyelmes', thinking: 'gondolkodó', attentive: 'éber', slumped: 'lehorgasztott', excited: 'lelkes', defensive: 'védekező' };
 
   return (
-    <div className="min-h-screen bg-[#030305] text-white">
+    <div className="min-min-h-screen overflow-y-auto bg-[#030305] text-white">
       <TopBar user={user} active="shell" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 lg:p-6 h-[calc(100vh-60px)]">
