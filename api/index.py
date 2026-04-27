@@ -1,37 +1,22 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-import google.generativeai as genai
-import os
+from http.server import BaseHTTPRequestHandler
+import json
 
-app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-
-# Gemini konfigurálás hibakezeléssel
-api_key = os.environ.get("GEMINI_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-1.5-flash")
-else:
-    model = None
-
-@app.post("/api/chat")
-async def chat(request: Request):
-    if not model:
-        return {"speech": "Hiba: Hiányzik a Gemini API kulcs!", "mood": {"joy": 0}}
-    
-    data = await request.json()
-    user_text = data.get("text", "Szia")
-    
-    try:
-        response = model.generate_content(f"Te vagy MANUS, az AI. Válaszolj röviden: {user_text}")
-        return {
-            "speech": response.text,
-            "mood": {"joy": 0.8, "calm": 0.5},
-            "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]
+class handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        response = {
+            "speech": "Szerver üzemkész natív módban!",
+            "mood": {"joy": 1.0, "energy": 1.0},
+            "status_events": [{"type": "info", "label": "Native Mode Active"}]
         }
-    except Exception as e:
-        return {"speech": f"Szerver hiba: {str(e)}", "mood": {"joy": 0}}
+        self.wfile.write(json.dumps(response).encode('utf-8'))
 
-@app.get("/api/health")
-def health():
-    return {"status": "ok", "api_key_set": api_key is not None}
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(json.dumps({"status": "ready"}).encode('utf-8'))
