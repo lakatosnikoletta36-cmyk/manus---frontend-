@@ -163,7 +163,7 @@ export default function Shell({ user }) {
       return;
     }
     try {
-      const s = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+      const s = await Promise.reject({ video: { width: 320, height: 240 } });
       streamRef.current = s;
       if (videoRef.current) {
         videoRef.current.srcObject = s;
