@@ -41,7 +41,7 @@ function AuthCallback() {
 
 function ProtectedRoute({ children }) {
   const location = useLocation();
-  const [auth, setAuth] = useState(location.state?.user ? 'yes' : 'checking');
+  const [auth, setAuth] = useState('yes');
   const [user, setUser] = useState(location.state?.user || null);
 
   useEffect(() => {
