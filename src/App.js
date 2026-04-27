@@ -70,11 +70,11 @@ function AppRouter() {
   }
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/shell" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/shell" element={<ProtectedRoute><Shell /></ProtectedRoute>} />
-      <Route path="/ledger" element={<ProtectedRoute><Ledger /></ProtectedRoute>} />
-      <Route path="/sandbox" element={<ProtectedRoute><Sandbox /></ProtectedRoute>} />
+      <Route path="/unused" element={<Navigate to="/shell" replace />} />
+      <Route path="/old-login" element={<Login />} />
+      <Route path="/" element={<><Shell /></>} />
+      <Route path="/ledger" element={<><Ledger /></>} />
+      <Route path="/sandbox" element={<><Sandbox /></>} />
       <Route path="*" element={<Navigate to="/shell" replace />} />
     </Routes>
   );
