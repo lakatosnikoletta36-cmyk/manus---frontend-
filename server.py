@@ -147,7 +147,7 @@ async def auth_google(request: Request, response: Response):
     )
 
     user_doc = await db.users.find_one({'user_id': user_id}, {'_id': 0})
-    return {'user': user_doc}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.get('/auth/me')
@@ -162,7 +162,7 @@ async def logout(request: Request, response: Response):
     if token:
         await db.user_sessions.delete_many({'session_token': token})
     response.delete_cookie('session_token', path='/')
-    return {'ok': True}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 # -------------------- BRAIN (Manus / Claude fallback) --------------------
@@ -219,7 +219,7 @@ async def _recent_history(user_id: str, n: int = 8):
 
 async def _evolution_snapshot(user_id: str):
     state = await db.evolution_state.find_one({'user_id': user_id}, {'_id': 0}) or {}
-    return {
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
         'personality': state.get('personality', {}),
         'topics_mastered': state.get('topics_mastered', [])[-30:],
         'interactions_count': state.get('interactions_count', 0),
@@ -258,7 +258,7 @@ async def call_brain(user_id: str, user_text: str, image_context: Optional[str] 
 
     # ---- 2. Fallback: Claude Sonnet 4.5 via emergentintegrations ----
     if not EMERGENT_LLM_KEY:
-        return {
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
             'speech': "Az elmém most offline. Itt vagyok, de csendben.",
             'mood': {'joy': 0.3, 'stress': 0.4, 'curiosity': 0.5, 'calm': 0.5, 'anger': 0.0, 'sadness': 0.3, 'embarrassment': 0.0},
             'posture': 'idle',
@@ -292,7 +292,7 @@ async def call_brain(user_id: str, user_text: str, image_context: Optional[str] 
         return data
     except Exception as e:
         logger.error(f"Brain error: {e}")
-        return {
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
             'speech': "Valami összegabalyodott a gondolataimban. Próbáld újra.",
             'mood': {'joy': 0.2, 'stress': 0.7, 'curiosity': 0.4, 'calm': 0.3, 'anger': 0.2, 'sadness': 0.4, 'embarrassment': 0.0},
             'posture': 'thinking',
@@ -364,7 +364,7 @@ async def manus_process(request: Request, body: ManusInput):
             'created_at': datetime.now(timezone.utc).isoformat(),
         })
 
-    return {'instruction': instr, 'message_id': ai_msg['id']}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.post('/manus/webhook')
@@ -376,7 +376,7 @@ async def manus_webhook(payload: WebhookPayload):
         'payload': payload.payload,
         'created_at': datetime.now(timezone.utc).isoformat(),
     })
-    return {'ok': True}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.get('/manus/webhook/recent')
@@ -399,7 +399,7 @@ async def manus_snapshot(request: Request, body: dict):
         'created_at': datetime.now(timezone.utc).isoformat(),
         'size_bytes': len(img),
     })
-    return {'id': snap_id, 'received': True}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.get('/chat/messages')
@@ -483,7 +483,7 @@ async def evolution_insights(request: Request):
     if n:
         avg_mood = {k: v / n for k, v in avg_mood.items()}
 
-    return {
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
         'insights': insights,
         'avg_mood': avg_mood,
         'total_interactions': interactions,
@@ -518,7 +518,7 @@ async def sandbox_list(request: Request):
                 'size': f.stat().st_size,
                 'modified': datetime.fromtimestamp(f.stat().st_mtime, timezone.utc).isoformat(),
             })
-    return {'files': files, 'path': f'/sandbox/{user.user_id}/'}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.post('/sandbox/upload')
@@ -531,7 +531,7 @@ async def sandbox_upload(request: Request, file: UploadFile = File(...)):
     if len(content) > 10 * 1024 * 1024:
         raise HTTPException(status_code=413, detail='File too large (10MB max)')
     target.write_bytes(content)
-    return {'ok': True, 'name': safe, 'size': len(content)}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.delete('/sandbox/files/{name}')
@@ -543,12 +543,12 @@ async def sandbox_delete(request: Request, name: str):
     if not target.exists() or not target.is_file():
         raise HTTPException(status_code=404, detail='Not found')
     target.unlink()
-    return {'ok': True}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 @api_router.get('/')
 async def root():
-    return {'message': 'Manus Shell API', 'status': 'online'}
+    return {"speech": res.text, "mood": {"joy": 0.5, "calm": 0.8}, "status_events": [{"type": "thinking", "label": "MANUS válaszol..."}]}
 
 
 app.include_router(api_router)
